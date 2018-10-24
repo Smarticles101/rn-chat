@@ -48,7 +48,7 @@ class HomeScreen extends React.Component {
 
       this.ref = firebase.database().ref('/channels/' + this.props.channel)
       this.ref.on('child_added', snap => {
-        var messages = Array.from(this.state.messages);
+        var messages = JSON.parse(JSON.stringify(this.state.messages));
         messages.push(snap.val());
         this.setState({ messages })
       })
@@ -59,6 +59,20 @@ class HomeScreen extends React.Component {
         this.props.navigation.navigate('Links');
       }
     }
+  }
+
+  submitMessage() {
+    let time = firebase.database.ServerValue.TIMESTAMP;
+
+    if (this.state.text !== '') {
+      firebase.database().ref('/channels/' + this.props.channel).push({ 
+        message: this.state.text,
+        author: this.props.profile.username,
+        time
+      })
+    }
+
+    this.setState({ text: '' })
   }
 
   render() {
@@ -72,30 +86,16 @@ class HomeScreen extends React.Component {
           }}
         >
           {this.props.channel === '' &&
-            <View style={styles.leftMessageBox}>
-              <View style={styles.leftMessageText}>
-                <Text>
-                  Join a channel clicking the "Search" icon on the tab bar.
-                </Text>
-              </View>
-            </View>
+            <LeftMessageBox 
+              message={{text: 'Join a channel clicking the "Search" icon on the tab bar.'}} 
+            />
           }
           {this.state.messages && this.state.messages.map((elm, i) => 
-            <View key={i} style={this.props.profile.username === elm.author ? styles.rightMessageBox : styles.leftMessageBox}>
-              <Text style={{
-                fontSize: 10,
-                color: 'grey',
-                margin: 1
-              }}>
-                {elm.author}
-              </Text>
-
-              <View style={this.props.profile.username === elm.author ? styles.rightMessageText : styles.leftMessageText}>
-                <Text>
-                  {elm.message}
-                </Text>
-              </View>
-            </View>
+            {this.props.profile.username === elm.author ? 
+              <RightMessageBox message={elm} key={i} />
+              :
+              <LeftMessageBox message={elm} key={i} />
+            }
           )}
         </ScrollView>
         <View style={styles.textInput}>
@@ -103,22 +103,40 @@ class HomeScreen extends React.Component {
             editable={this.props.channel !== ''}
             onChangeText={(text) => this.setState({text})}
             value={this.state.text}
-            onSubmitEditing={() => {
-              let time = firebase.database.ServerValue.TIMESTAMP;
-
-              if (this.state.text !== '')
-                firebase.database().ref('/channels/' + this.props.channel).push({ 
-                  message: this.state.text,
-                  author: this.props.profile.username,
-                  time
-                })
-              this.setState({ text: '' })
-            }}
+            onSubmitEditing={this.submitMessage.bind(this)}
           />
         </View>
       </KeyboardAvoidingView>
     );
   }
+}
+
+const LeftMessageBox = (props) => {
+  <View style={styles.leftMessageBox}>
+    <Text style={styles.authorText}>
+      {props.message.author}
+    </Text>
+
+    <View style={styles.leftMessageText}>
+      <Text>
+        {props.message.text}
+      </Text>
+    </View>
+  </View>
+}
+
+const RightMessageBox = (props) => {
+  <View style={styles.rightMessageBox}>
+    <Text style={styles.authorText}>
+      {props.message.author}
+    </Text>
+
+    <View style={styles.rightMessageText}>
+      <Text>
+        {props.message.text}
+      </Text>
+    </View>
+  </View>
 }
 
 const styles = StyleSheet.create({
@@ -165,6 +183,11 @@ const styles = StyleSheet.create({
   rightMessageBox: {
     alignSelf: 'flex-end',
     margin: 10,
+  },
+  authorText: {
+    fontSize: 10,
+    color: 'grey',
+    margin: 1
   }
 });
 
