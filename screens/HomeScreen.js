@@ -111,7 +111,7 @@ class HomeScreen extends React.Component {
   }
 }
 
-const LeftMessageBox = (props) => {
+const LeftMessageBox = (props) => (
   <View style={styles.leftMessageBox}>
     <Text style={styles.authorText}>
       {props.message.author}
@@ -123,9 +123,9 @@ const LeftMessageBox = (props) => {
       </Text>
     </View>
   </View>
-}
+)
 
-const RightMessageBox = (props) => {
+const RightMessageBox = (props) => (
   <View style={styles.rightMessageBox}>
     <Text style={styles.authorText}>
       {props.message.author}
@@ -137,7 +137,7 @@ const RightMessageBox = (props) => {
       </Text>
     </View>
   </View>
-}
+)
 
 const styles = StyleSheet.create({
   container: {
@@ -193,11 +193,11 @@ const styles = StyleSheet.create({
 
 
 const mapStateToProps = state => {
-  console.log(state)
   return({
-  profile: state.profile,
-  channel: state.channel
-})}
+    profile: state.profile,
+    channel: state.channel
+  })
+}
 
 const mapDispatchToProps = dispatch => ({
   setChannel: channel => dispatch(setChannel(channel))
