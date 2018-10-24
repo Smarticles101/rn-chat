@@ -24,6 +24,13 @@ class LinksScreen extends React.Component {
     }
   }
 
+  addChannel(channel) {
+    this.props.addChannel(channel)
+    this.setState({ text: '', filteredChannels: [] })
+    Keyboard.dismiss();
+    this.props.navigation.navigate('Home');
+  }
+
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -51,10 +58,7 @@ class LinksScreen extends React.Component {
         <View style={styles.results}>
           {this.state.text !== '' && !this.state.filteredChannels.map(e => e.toLowerCase()).includes(this.state.text.toLowerCase()) &&
             <TouchableOpacity style={styles.result} onPress={() => {
-              this.props.addChannel(this.state.text)
-              this.setState({ text: '', filteredChannels: [] })
-              Keyboard.dismiss();
-              this.props.navigation.navigate('Home');
+              this.addChannel(this.state.text)
             }}>
               <Text style={styles.resultText}>
                 <Text style={{color: 'skyblue'}}>
@@ -67,10 +71,7 @@ class LinksScreen extends React.Component {
           {this.state.text !== '' ? 
             this.state.filteredChannels.map((chan, i) =>
               <TouchableOpacity key={i} style={styles.result} onPress={() => {
-                this.props.addChannel(chan)
-                this.setState({ text: '', filteredChannels: [] })
-                Keyboard.dismiss();
-                this.props.navigation.navigate('Home');
+                this.addChannel(chan)
               }}>
                 <Text style={styles.resultText}>
                   <Text style={{color: 'rebeccapurple'}}>
