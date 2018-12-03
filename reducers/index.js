@@ -34,7 +34,7 @@ export default (state, action) => {
                     ...state,
                     profile: {
                         ...state.profile,
-                        channels: [...Array.from(state.profile.channels), action.payload]
+                        channels: [...state.profile.channels, action.payload]
                     }
                 }
             }

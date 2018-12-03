@@ -5,7 +5,8 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
-  Text
+  Text,
+  Keyboard
 } from 'react-native';
 
 import * as firebase from 'firebase';
@@ -43,12 +44,15 @@ class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      this.scrollView.scrollToEnd({animated: false});
+    })
     if (this.props.channel && this.props.channel !== '') {
       this.props.navigation.setParams({ title: this.props.channel })
 
       this.ref = firebase.database().ref('/channels/' + this.props.channel)
       this.ref.on('child_added', snap => {
-        var messages = JSON.parse(JSON.stringify(this.state.messages));
+        var messages = Array.from(this.state.messages);
         messages.push(snap.val());
         this.setState({ messages })
       })
@@ -87,15 +91,14 @@ class HomeScreen extends React.Component {
         >
           {this.props.channel === '' &&
             <LeftMessageBox 
-              message={{text: 'Join a channel clicking the "Search" icon on the tab bar.'}} 
+              message={{message: 'Join a channel clicking the "Search" icon on the tab bar.'}} 
             />
           }
           {this.state.messages && this.state.messages.map((elm, i) => 
-            {this.props.profile.username === elm.author ? 
+            this.props.profile.username === elm.author ? 
               <RightMessageBox message={elm} key={i} />
               :
               <LeftMessageBox message={elm} key={i} />
-            }
           )}
         </ScrollView>
         <View style={styles.textInput}>
@@ -119,7 +122,7 @@ const LeftMessageBox = (props) => (
 
     <View style={styles.leftMessageText}>
       <Text>
-        {props.message.text}
+        {props.message.message}
       </Text>
     </View>
   </View>
@@ -133,7 +136,7 @@ const RightMessageBox = (props) => (
 
     <View style={styles.rightMessageText}>
       <Text>
-        {props.message.text}
+        {props.message.message}
       </Text>
     </View>
   </View>
