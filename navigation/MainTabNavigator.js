@@ -1,60 +1,50 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from "react";
+import { Platform } from "react-native";
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
+import TabBarIcon from "../components/TabBarIcon";
+import HomeScreen from "../screens/HomeScreen";
+import LinksScreen from "../screens/LinksScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Chat',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-chatboxes${focused ? '' : '-outline'}`
-          : 'md-chatboxes'
-      }
-    />
-  ),
-};
+const Tab = createBottomTabNavigator();
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
-});
+export default function MainTabNavigator() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Search',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-search${focused ? '' : '-outline'}` : 'md-search'}
-    />
-  ),
-};
+          if (route.name === "Home") {
+            iconName = "chatbox";
+          } else if (route.name === "Links") {
+            iconName = "search";
+          } else if (route.name === "Profile") {
+            iconName = "person";
+          }
 
-const ProfileStack = createStackNavigator({
-  Settings: ProfileScreen,
-});
+          Platform.OS === "ios"
+            ? (iconName = `ios-${iconName}`)
+            : (iconName = `md-${iconName}`);
 
-ProfileStack.navigationOptions = {
-  tabBarLabel: 'Profile',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-person${focused ? '' : '-outline'}` : 'md-person'}
-    />
-  ),
-};
+          // You can return any component that you like here!
+          return <TabBarIcon focused={focused} name={iconName} />;
+        }
+      })}>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Links" component={LinksScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
 
-export default createBottomTabNavigator({
+/*export default createBottomTabNavigator({
   HomeStack,
   LinksStack,
   ProfileStack,
-});
+});*/

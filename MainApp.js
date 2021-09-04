@@ -20,7 +20,8 @@ class MainApp extends React.Component {
       messagingSenderId: "549872912747"
     };
 
-    firebase.initializeApp(config);
+    !firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
+    
     firebase.auth().useDeviceLanguage();
     firebase.auth().onAuthStateChanged((user) => {
         this.props.onAuthStateChanged(!!user)
