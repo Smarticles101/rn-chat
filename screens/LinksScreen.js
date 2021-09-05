@@ -28,7 +28,7 @@ class LinksScreen extends React.Component {
     this.props.addChannel(channel)
     this.setState({ text: '', filteredChannels: [] })
     Keyboard.dismiss();
-    this.props.navigation.navigate('Home');
+    this.props.navigation.navigate('Chat');
   }
 
   render() {
@@ -86,7 +86,7 @@ class LinksScreen extends React.Component {
             this.props.profile.channels.map((chan, i) =>
               <TouchableOpacity key={i} style={styles.result} onPress={() => {
                 this.props.setChannel(chan);
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('Chat');
               }}>
                 <Text style={styles.resultText}>{chan}</Text>
               </TouchableOpacity>
