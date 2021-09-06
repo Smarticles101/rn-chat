@@ -9,7 +9,7 @@ import { setSignedIn, setUserProfile } from "./action/index";
 import * as firebase from "firebase";
 
 class MainApp extends React.Component {
-  MainApp() {
+  componentDidMount() {
     var config = {
       apiKey: "AIzaSyA_kCF11ubrhfEvQn7TAYHC3OQy6UbNisU",
       authDomain: "chat-app-bd176.firebaseapp.com",
