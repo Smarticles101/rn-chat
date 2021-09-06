@@ -16,14 +16,6 @@ import { connect } from "react-redux";
 import { setChannel } from "../action/index";
 
 class ChatScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
-    title:
-      typeof navigation.state.params === "undefined" ||
-      typeof navigation.state.params.title === "undefined"
-        ? "Join a channel!"
-        : navigation.state.params.title,
-  });
-
   state = {
     text: "",
     messages: [],
@@ -31,7 +23,9 @@ class ChatScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.channel !== this.props.channel) {
-      this.props.navigation.setParams({ title: this.props.channel });
+      this.props.navigation.setOptions({
+        title: this.props.channel,
+      });
       this.setState({ messages: [] });
 
       if (this.ref) this.ref.off();
@@ -53,7 +47,9 @@ class ChatScreen extends React.Component {
       }
     );
     if (this.props.channel && this.props.channel !== "") {
-      this.props.navigation.setParams({ title: this.props.channel });
+      this.props.navigation.setOptions({
+        title: this.props.channel
+      });
 
       this.ref = firebase.database().ref("/channels/" + this.props.channel);
       this.ref.on("child_added", (snap) => {
@@ -70,6 +66,9 @@ class ChatScreen extends React.Component {
           this.props.profile.channels[this.props.profile.channels.length - 1]
         );
       } else {
+        this.props.navigation.setOptions({
+          title: "Join a channel"
+        });
         this.props.navigation.navigate("Links");
       }
     }
