@@ -48,7 +48,7 @@ class ChatScreen extends React.Component {
     );
     if (this.props.channel && this.props.channel !== "") {
       this.props.navigation.setOptions({
-        title: this.props.channel
+        title: this.props.channel,
       });
 
       this.ref = firebase.database().ref("/channels/" + this.props.channel);
@@ -67,7 +67,7 @@ class ChatScreen extends React.Component {
         );
       } else {
         this.props.navigation.setOptions({
-          title: "Join a channel"
+          title: "Join a channel",
         });
         this.props.navigation.navigate("Links");
       }
@@ -110,11 +110,19 @@ class ChatScreen extends React.Component {
             />
           )}
           {this.state.messages &&
-            this.state.messages.map((elm, i) =>
+            this.state.messages.map((elm, i, arr) =>
               this.props.profile.username === elm.author ? (
-                <RightMessageBox message={elm} key={i} />
+                <RightMessageBox
+                  message={elm}
+                  key={i}
+                  showAuthor={i === 0 || arr[i - 1].author !== elm.author}
+                />
               ) : (
-                <LeftMessageBox message={elm} key={i} />
+                <LeftMessageBox
+                  message={elm}
+                  key={i}
+                  showAuthor={i === 0 || arr[i - 1].author !== elm.author}
+                />
               )
             )}
         </ScrollView>
@@ -133,7 +141,9 @@ class ChatScreen extends React.Component {
 
 const LeftMessageBox = (props) => (
   <View style={styles.leftMessageBox}>
-    <Text style={styles.authorText}>{props.message.author}</Text>
+    {props.showAuthor && (
+      <Text style={styles.authorText}>{props.message.author}</Text>
+    )}
 
     <View style={styles.leftMessageText}>
       <Text>{props.message.message}</Text>
@@ -143,7 +153,9 @@ const LeftMessageBox = (props) => (
 
 const RightMessageBox = (props) => (
   <View style={styles.rightMessageBox}>
-    <Text style={styles.authorText}>{props.message.author}</Text>
+    {props.showAuthor && (
+      <Text style={styles.authorText}>{props.message.author}</Text>
+    )}
 
     <View style={styles.rightMessageText}>
       <Text>{props.message.message}</Text>
@@ -181,6 +193,8 @@ const styles = StyleSheet.create({
   leftMessageBox: {
     alignSelf: "flex-start",
     margin: 10,
+    marginTop: 0,
+    marginBottom: 2,
   },
   rightMessageText: {
     padding: 10,
@@ -195,11 +209,14 @@ const styles = StyleSheet.create({
   rightMessageBox: {
     alignSelf: "flex-end",
     margin: 10,
+    marginTop: 0,
+    marginBottom: 2,
   },
   authorText: {
     fontSize: 10,
     color: "grey",
     margin: 1,
+    marginTop: 8,
   },
 });
 
